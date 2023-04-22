@@ -15,7 +15,8 @@ async def GetStatusMessage():
     results = await Triggers.Get("Status").Call( lambda func: func() )
     operational = [ name for (name, value, errmess) in results if value == True ]
     failed = [ (name, errmess) for (name, value, errmess) in results if value == False ]
-    output = [f"ZEKE-BASED BOT\nFree & open source available on: {ENGINE_REPO}\nReport created on: {str(datetime.now())}\n"]
+    now = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    output = [f"ZEKE-BASED BOT\nFree & open source available on: {ENGINE_REPO}\nReport created on: {now}\n"]
     for name in operational:
         output.append(f"{name}: OK")
     output.append("")

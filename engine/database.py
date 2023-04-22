@@ -86,7 +86,7 @@ class Dropbox(Storage):
             return (False, str(e))
     async def Status(self):
         status, err = await self.__raw_status()
-        return ("Storage Integration", status, err)
+        return ("Storage integration", status, err)
 
 ####################################################################
 # Database
