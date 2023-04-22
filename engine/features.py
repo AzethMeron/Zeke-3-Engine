@@ -4,6 +4,7 @@ import sys
 import importlib
 
 from constants import FEATURES_DIR
+os.makedirs(FEATURES_DIR, exist_ok=True)
 sys.path.extend( [FEATURES_DIR] )
 features_filenames = [file for file in os.listdir(FEATURES_DIR) if os.path.isfile( os.path.join(FEATURES_DIR, file) )]
 

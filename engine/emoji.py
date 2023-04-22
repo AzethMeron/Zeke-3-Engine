@@ -11,3 +11,4 @@ class Emoji:
 
 objectEmoji = Emoji()
 objectEmoji.Add("ThumbUp", "👍")
+objectEmoji.Add("ThumbDown", "👎")
