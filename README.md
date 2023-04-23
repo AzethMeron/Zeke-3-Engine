@@ -25,3 +25,5 @@ DISCORD_TOKEN="your token here"
 DROPBOX_TOKEN="your token here"  
 (optional) DETECT_LANGUAGE_TOKEN="your token here"  
 Discord bot must have... all intents enabled.  
+
+Engine requires files .salt.dump and .aeskey.dump for encryption. If they don't exist, it will generate them automatically. Don't lose those files or you won't be able to load your data from storage!  
