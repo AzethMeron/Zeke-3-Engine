@@ -58,7 +58,7 @@ class Parser:
         else: # Not parametrized, parser help
             availableCommands = [ cmd for cmd in self.__commands if self.__PermissionCheck(ctx, self.__commands[cmd], ctx.message.author) ]
             availableCommands.sort()
-            mess = ["Syntax: " + ' '.join(trail) + " [...]"] 
+            mess = ["Syntax: " + ' '.join(trail) + " <command>"] 
             for cmd in availableCommands:
                 Command = self.__commands[cmd]
                 mess.append('{0: <10}'.format(cmd) + Command.Help)
