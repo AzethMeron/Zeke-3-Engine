@@ -111,7 +111,17 @@ Zeke's custom command parser requires function with header ```async func(ctx, ar
 
 Commands are considered to succeed if executed properly. If ```cmd_add``` doesn't return or returns ```None```/```False```, then Zeke automatically adds 👍 reaction; this can be prevented by returning ```True```. If you wish to give error feedback, raise any exception and Zeke will forward it to the user.  
 
+Once function is created, we must add it to ```MainParser``` somehow. Typically, for features I'm making new instance of ```Parser``` which i fill with commands for given feature, then I add this parser as new command to ```MainParser```
+```py
+parser = Parser("translate")
+parser.Add( Command("add", cmd_add, Help = "Add emoji translation for language.", LongHelp = "Add emoji translation for language.\nSyntax: TRAIL <emoji> <language>") )
+#parser.Add( Command("remove", cmd_remove, Help = "Remove emoji translation for language.", LongHelp = "Remove emoji translation for language.\nSyntax: TRAIL <emoji>") )
+#parser.Add( Command("list", cmd_list, Help = "Display list of current emojis used in translations.", LongHelp = "Display list of current emojis used in translations.\nSyntax: TRAIL") )
+#parser.Add( Command("custom", cmd_custom, Help = "Display list of available custom languages.", LongHelp = "Display list of available custom languages.\nNot real languages obviously.\nSyntax: TRAIL") )
+MainParser.Add( Command(parser.Name(), parser, Help = "Setup translation feature", StaticPerms=discord.Permissions.all()) )
+```
 
+```Parser(name)``` requires only ```name:string``` to create. ```Command(...)``` is more complicated, it requires: ```name:string, obj:async func(ctx, args,trail) OR Parser, Help = :string, LongHelp = :string, StaticPerms = :discord.Permissions```, although only ```name``` and ```obj``` are strictly required, rest is optional. 
 
 ---
 
@@ -144,6 +154,14 @@ Triggers.Get("Status").Add(func) # async func(), returns (name:string, result:bo
 
 ---
 
+# Command Parser
+
+---
+
+# Status check
+
+---
+
 # Security
 
 First of all, I've no education in computer security. I've tried to add encryption to all long-term storage data, but i don't have expertise to verify if the approach taken is actually secure. That being said, let me explain what's in the code.  
@@ -155,7 +173,3 @@ Data of guild is stored in file named ```hash(guild_id)```. ```hash``` <i>(in al
 The data itself is encrypted with ```AES``` algorithm using 24-bytes long key <i>(also automatically generated and stored in ```.aeskey.dump```)</i>. Encryption requires pickle-dumping of data, converting whole ```GuildEnv``` <i>(except ```Temporary``` part)</i> into binary string. SHA256 is used to compute hash of this binary string before encryption. Then, Initialisation Vector (IV) is randomly generated. Finally, binary string of data is encrypted into cipher. Tuple of all three ```(IV, cipher, hash)``` is then again pickle-dumped into binary string - which is returned.  
 
 Decryption pretty much reverses this process, pickle-loading, decrypting and verifying hash. Note that pickle-dumping and pickle-loading is considered <b>INSECURE</b> in python and may run any code on server's machine if your storage is hacked. 
-
----
-
-# aaa
