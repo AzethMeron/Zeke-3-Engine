@@ -108,7 +108,14 @@ Triggers.Get("on_guild_join").Add(func) # async func(local_env, guild)
 Triggers.Get("on_guild_remove").Add(func) # async func(local_env, guild)
 Triggers.Get("on_ready").Add(func) # async func()
 ```
-All triggers and parameters are self explanatory or taken directly from ```discord.py``` so I won't describe them. ```local_env``` is ```GuildEnv``` of server (guild) within which this trigger was called. Also it's worth noting that <b>Zeke ignores messages and reactions sent in DM or by other bots</b>. You can get DMs with ```on_dm``` trigger but given guild-oriented focus of this bot, there's little support for that (f.e. ```Database``` only works with guilds, not DMs)
+All triggers and parameters are self explanatory or taken directly from ```discord.py``` so I won't describe them. ```local_env``` is ```GuildEnv``` of server (guild) within which this trigger was called. Also it's worth noting that <b>Zeke ignores messages and reactions sent in DM or by other bots</b>. You can get DMs with ```on_dm``` trigger but given guild-oriented focus of this bot, there's little support for that (f.e. ```Database``` only works with guilds, not DMs)  
+
+There are also strictly Zeke's triggers
+```
+Triggers.Get("Initialisation").Add(func) # async func()
+Triggers.Get("Status").Add(func) # async func(), returns (name:string, result:bool, err_mess:string)
+```
+```Initialisation``` is called after the entire engine (especially ```EnvVars```) is initialised. ```Status``` deserves own chapter, but in short: it's used to create status check for given feature (useful to detect and debug problems with 3rd party integrations)
 
 # Security
 
