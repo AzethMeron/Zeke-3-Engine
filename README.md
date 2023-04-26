@@ -15,7 +15,7 @@ Deals with most of back-end so you can focus on creation of functionality.
 - Automatic loading of ```.py``` files in ```.features/``` subdirectory
 - Translation using emojis as example what it can be used for :)
 
-# Setup
+# Installation, setup
 
 Created and tested for Python 3.11  
 All python packages required are listed in ```requirements.txt```, install them using pip ```install -r requirements.txt```  
@@ -37,7 +37,7 @@ Engine requires files ```.salt.dump``` and ```.aeskey.dump``` for encryption. If
 
 To start, run ```python executable_main.py``` while in the main directory. Project first loads and sets-up all relevenat scripts from ```engine/```, then imports all scripts from ```.features/```. Both those directories are added to ```sys.path``` so it's as-if they were in the same directory.
 
-# How to use
+# Introduction, how-to-use
 
 To add a feature, you should create .py file in ```.features/``` directory. It will be automatically loaded on startup and you can "attach" your own code to the main process using ```Triggers```. It may sound complicated so let me show an example
 
