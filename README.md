@@ -5,14 +5,14 @@ Deals with most of back-end so you can focus on creation of functionality.
 
 # Features of engine
 
-- Local environment of each guild saved on remote server
+- Local environment for each guild saved on remote server
 - AES encryption of data
-- Custom (tree based) parser for commands
+- Custom <i>(tree based)</i> parser for commands
 - Object-oriented
-- Aliases (macros) to shorten frequently used commands
-- Bundles (send multiple commands in one)
-- Error handling (logging)
-- Status check (test integration with third-party services)
+- Aliases <i>(macros)</i> to shorten frequently used commands
+- Bundles <i>(send multiple commands in one)</i>
+- Error handling <i>(logging)</i>
+- Status check <i>(test integration with third-party services)</i>
 - Translation and language detection
 - Automatic loading of ```.py``` files in ```.features/``` subdirectory
 - Translation using emojis as example what it can be used for :)
