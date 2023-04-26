@@ -78,12 +78,12 @@ async def on_raw_reaction_add(local_env, payload, PartialEmoji, member, guild, m
     if reaction and reaction.count > 1: return # Skip if there're more such reactions already added
     emoji = str(PartialEmoji) # Stringify emoji - key for our dictionary
     text = message.content # Get text of the message
-    reaction_translator = local_env.Settings.Get("reaction_translator")
+    reaction_translator = local_env.Settings.Get("reaction_translator") # get reference to dictionary object
+    # local_env.Settings.Set("reaction_translator", reaction_translator) # If your data can't be accessed with a refence (python number, for example) you can set this value later with Env.Set
     if emoji in reaction_translator: # if emoji is programmed to translate message
         tgt_lang = reaction_translator[emoji] # get target language
-        src_lang = "auto"
-        (src_lang, _, translated) = TranslateTools.Translate(text, tgt_lang)
-        await message.add_reaction(PartialEmoji)
+        (src_lang, _, translated) = TranslateTools.Translate(text, tgt_lang) # Get src_lang, tgt_lang and translated text
+        await message.add_reaction(PartialEmoji) # Add reaction with the same emoji, so users can't spam-translate the same message
         #await PostMessage(message, member, translated, src_lang, tgt_lang) # send message with translation
 Triggers.Get("on_raw_reaction_add").Add(on_raw_reaction_add)
 ```
