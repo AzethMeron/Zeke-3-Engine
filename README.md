@@ -88,7 +88,7 @@ async def on_raw_reaction_add(local_env, payload, PartialEmoji, member, guild, m
 Triggers.Get("on_raw_reaction_add").Add(on_raw_reaction_add)
 ```
 
-This makes ```on_raw_reaction_add``` run every time anyone adds a reaction, even if corresponding message isn't loaded by the bot.<b>Triggers are Zeke's way of expanding functionality</b>; no need to modify engine, you just append your function and Zeke handles exceptions, printing to logs and more. More about available triggers and their syntax in separate chapter.  
+This makes ```on_raw_reaction_add``` run every time anyone adds a reaction, even if corresponding message isn't loaded by the bot. <b>Triggers are Zeke's way of expanding functionality</b>; no need to modify engine, you just append your function and Zeke handles exceptions, printing to logs and more. More about available triggers and their syntax in separate chapter.  
 
 # Triggers
 
