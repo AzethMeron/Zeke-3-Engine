@@ -1,6 +1,8 @@
 # Zeke 3 - Pythonic engine for Discord bots
 Deals with most of back-end so you can focus on creation of functionality.
 
+---
+
 # Features of engine
 
 - Local environment of each guild saved on remote server
@@ -14,6 +16,8 @@ Deals with most of back-end so you can focus on creation of functionality.
 - Translation and language detection
 - Automatic loading of ```.py``` files in ```.features/``` subdirectory
 - Translation using emojis as example what it can be used for :)
+
+---
 
 # Installation, setup
 
@@ -36,6 +40,8 @@ Discord bot must have... all intents enabled.
 Engine requires files ```.salt.dump``` and ```.aeskey.dump``` for encryption. If they don't exist, it will generate them automatically. Don't lose those files or you won't be able to load your data from storage!  
 
 To start, run ```python executable_main.py``` while in the main directory. Project first loads and sets-up all relevenat scripts from ```engine/```, then imports all scripts from ```.features/```. Both those directories are added to ```sys.path``` so it's as-if they were in the same directory.
+
+---
 
 # Introduction, how-to-use
 
@@ -61,7 +67,7 @@ Let's take simplified code of ```translate.py```:
 ```py
 Database.Default.Settings.AddDefault("reaction_translator", dict()) # dict[emoji] = tgt_lang
 ```
-Here we create new dictionary ```dict()``` and store it in ```Env``` (from ```guildenv.py```), inside ```Settings``` part, under name ```reaction_translator```. ```Env``` has three attributes: ```Settings```, ```Data```, ```Temporary```. They're the same except ```Temporary``` is lost on shutdown. <b>All data stored in Database must be pickle-able and MUST NOT contain any reference loops</b>.
+Here we create new dictionary ```dict()``` and store it in ```Env``` <i>(from ```guildenv.py```)</i>, inside ```Settings``` part, under name ```reaction_translator```. ```Env``` has three attributes: ```Settings```, ```Data```, ```Temporary```. They're the same except ```Temporary``` is lost on shutdown. <b>All data stored in Database must be pickle-able and MUST NOT contain any reference loops</b>.
 
 Dictionary we've created can be used to store any kind of data. In this scenarion, we will use ```emoji``` <i>(type ```string```)</i> as key and language code as value.
 
@@ -90,6 +96,8 @@ Triggers.Get("on_raw_reaction_add").Add(on_raw_reaction_add)
 
 This makes ```on_raw_reaction_add``` run every time anyone adds a reaction, even if corresponding message isn't loaded by the bot. <b>Triggers are Zeke's way of expanding functionality</b>; no need to modify engine, you just append your function and Zeke handles exceptions, printing to logs and more. More about available triggers and their syntax in separate chapter.  
 
+---
+
 # Triggers
 
 Triggers are Zeke's way of expanding functionality - if you want your functionality to react to message being sent, you create such function <i>(coroutine, actually)</i> and add it to corresponding trigger. It's very similar to discord events, but Zeke usually passes additional arguments to trigger calls.  
@@ -117,6 +125,8 @@ Triggers.Get("Status").Add(func) # async func(), returns (name:string, result:bo
 ```
 ```Initialisation``` is called after the entire engine <i>(especially ```EnvVars```)</i> is initialised. ```Status``` deserves own chapter, but in short: it's used to create status check for given feature <i>(useful to detect and debug problems with 3rd party integrations)</i>
 
+---
+
 # Security
 
 First of all, I've no education in computer security. I've tried to add encryption to all long-term storage data, but i don't have expertise to verify if the approach taken is actually secure. That being said, let me explain what's in the code.  
@@ -128,5 +138,7 @@ Data of guild is stored in file named ```hash(guild_id)```. ```hash``` <i>(in al
 The data itself is encrypted with ```AES``` algorithm using 24-bytes long key <i>(also automatically generated and stored in ```.aeskey.dump```)</i>. Encryption requires pickle-dumping of data, converting whole ```GuildEnv``` <i>(except ```Temporary``` part)</i> into binary string. SHA256 is used to compute hash of this binary string before encryption. Then, Initialisation Vector (IV) is randomly generated. Finally, binary string of data is encrypted into cipher. Tuple of all three ```(IV, cipher, hash)``` is then again pickle-dumped into binary string - which is returned.  
 
 Decryption pretty much reverses this process, pickle-loading, decrypting and verifying hash. Note that pickle-dumping and pickle-loading is considered <b>INSECURE</b> in python and may run any code on server's machine if your storage is hacked. 
+
+---
 
 # aaa
