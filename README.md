@@ -22,10 +22,14 @@ All python packages required are listed in ```requirements.txt```, install them 
 
 Tokens must be included in ".env" file in working directory, containing:  
 ```
+# Required. Your discord's bot token, You can get one at https://discord.com/developers/applications
 DISCORD_TOKEN="your token here"
+# Required. Your token for dropbox's app. You can get one at https://www.dropbox.com/developers/documentation/python
 DROPBOX_TOKEN="your token here"
-(optional) DETECT_LANGUAGE_TOKEN="your token here"
-(optional) DATA_SAVE_INTERVAL_MIN=number_of_minutes_between_database_save
+# Optional. Token for better language detection library. You can get one at https://detectlanguage.com/
+DETECT_LANGUAGE_TOKEN="your token here"
+# Optional. Number of minutes between saves of database, if unset it will default to 30 minutes
+DATA_SAVE_INTERVAL_MIN=number_of_minutes_between_database_save
 ```
 Discord bot must have... all intents enabled.  
 
@@ -49,6 +53,10 @@ from cmdparser import Parser, Command
 from envvars import objectEnvVars as EnvVars
 from discordbot import DiscordBot
 ```
+
+Usually first thing within the script is to add some data to default environment of guilds. ```Database.Default``` (type ```GuildEnv```) is default environment which is used to update every existing guild environment. <b>TL:DR if you add something to ```Database.Default``` it will appear in every guild environment, including existing ones</b>.  
+
+
 
 # Security
 
