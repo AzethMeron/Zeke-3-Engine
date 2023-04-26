@@ -90,11 +90,28 @@ async def on_raw_reaction_add(local_env, payload, PartialEmoji, member, guild, m
         tgt_lang = reaction_translator[emoji] # get target language
         (src_lang, _, translated) = TranslateTools.Translate(text, tgt_lang) # Get src_lang, tgt_lang and translated text
         await message.add_reaction(PartialEmoji) # Add reaction with the same emoji, so users can't spam-translate the same message
-        #await PostMessage(message, member, translated, src_lang, tgt_lang) # send message with translation
+        await Tools.DcReply(message, translated, postprocess = Tools.DcWrapCode) # send message with translation
 Triggers.Get("on_raw_reaction_add").Add(on_raw_reaction_add)
 ```
 
-This makes ```on_raw_reaction_add``` run every time anyone adds a reaction, even if corresponding message isn't loaded by the bot. <b>Triggers are Zeke's way of expanding functionality</b>; no need to modify engine, you just append your function and Zeke handles exceptions, printing to logs and more. More about available triggers and their syntax in separate chapter.  
+This makes ```on_raw_reaction_add``` run every time anyone adds a reaction, even if corresponding message isn't loaded by the bot. <b>Triggers are Zeke's way of expanding functionality</b>; no need to modify engine, you just append your function and Zeke does the rest. More about available triggers and their syntax in separate chapter.  
+
+Above code allows to translate messages with reaction, but there's still missing part: we need to fill ```reaction_translator``` dictionary with data, so it knows which emojis it should react to. Of course, it could be hardcoded but I prefer to make commands so users can fill their translation database on their own. 
+```py
+async def cmd_add(ctx, args, trail):
+    if len(args) != 2: raise RuntimeError("Incorrect arguments. Expected: <emoji> <language>")
+    local_env = Database.GetGuildEnv(ctx.guild.id) # Get GuildEnv for this guild
+    emoji = args[0]
+    lang = args[1]
+    reaction_translator = local_env.Settings.Get("reaction_translator")
+    if emoji in reaction_translator: raise RuntimeError(f"This emoji is already occupied by '{reaction_translator[emoji]}' language")
+    reaction_translator[emoji] = lang
+```
+Zeke's custom command parser requires function with header ```async func(ctx, args, trail)```. ``ctx`` is of discord's type ```Context```, but both ```args``` and ```trail``` are lists. It works like this: ```zk3 translate add 🇵🇱 pl``` -> ```args = ["🇵🇱", "pl"], trail = ["zk3", "translate", "add"]```. Trail usually isn't very useful, used mostly by built-in command ```"help"```.  
+
+Commands are considered to succeed if executed properly. If ```cmd_add``` doesn't return or returns ```None```/```False```, then Zeke automatically adds 👍 reaction; this can be prevented by returning ```True```. If you wish to give error feedback, raise any exception and Zeke will forward it to the user.  
+
+
 
 ---
 
