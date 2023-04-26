@@ -22,9 +22,10 @@ All python packages required are listed in ```requirements.txt```, install them 
 
 Tokens must be included in ".env" file in working directory, containing:  
 ```
-DISCORD_TOKEN="your token here"  
-DROPBOX_TOKEN="your token here"  
-(optional) DETECT_LANGUAGE_TOKEN="your token here"  
+DISCORD_TOKEN="your token here"
+DROPBOX_TOKEN="your token here"
+(optional) DETECT_LANGUAGE_TOKEN="your token here"
+(optional) DATA_SAVE_INTERVAL_MIN=number_of_minutes_between_database_save
 ```
 Discord bot must have... all intents enabled.  
 
@@ -33,6 +34,21 @@ Engine requires files ```.salt.dump``` and ```.aeskey.dump``` for encryption. If
 To start, run ```python executable_main.py``` while in the main directory. Project first loads and sets-up all relevenat scripts from ```engine/```, then imports all scripts from ```.features/```. Both those directories are added to ```sys.path``` so it's as-if they were in the same directory.
 
 # How to use
+
+To add a feature, you should create .py file in ```.features/``` directory. It will be automatically loaded on startup and you can "attach" your own code to the main process using ```Triggers```. It may sound complicated so let me show an example
+
+At first, let's load all of important modules. <b>We won't use all of them</b>, but here's import-recipe for you.
+```py
+from triggers import objectTriggers as Triggers
+from triggers import objectGlobalTimers as GlobalTimers
+from triggers import objectTimers as Timers
+from tools import objectTools as Tools
+from database import objectDatabase as Database
+from cmdparser import objectMainParser as MainParser
+from cmdparser import Parser, Command
+from envvars import objectEnvVars as EnvVars
+from discordbot import DiscordBot
+```
 
 # Security
 
