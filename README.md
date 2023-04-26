@@ -55,7 +55,7 @@ from envvars import objectEnvVars as EnvVars
 from discordbot import DiscordBot
 ```
 
-Usually first thing within the script is to add some data to default environment of guilds. ```Database.Default``` (type ```GuildEnv```) is default environment which is used to update every existing guild environment. <b>TL:DR if you add something to ```Database.Default``` it will appear in every guild environment, including existing ones</b>.  
+Usually first thing within the script is to add some data to default environment of guilds. ```Database.Default``` <i>(type ```GuildEnv```)</i> is default environment which is used to update every existing guild environment. <b>TL:DR if you add something to ```Database.Default``` it will appear in every guild environment, including existing ones</b>.  
 
 Let's take simplified code of ```translate.py```:
 ```py
@@ -63,7 +63,7 @@ Database.Default.Settings.AddDefault("reaction_translator", dict()) # dict[emoji
 ```
 Here we create new dictionary ```dict()``` and store it in ```Env``` (from ```guildenv.py```), inside ```Settings``` part, under name ```reaction_translator```. ```Env``` has three attributes: ```Settings```, ```Data```, ```Temporary```. They're the same except ```Temporary``` is lost on shutdown. <b>All data stored in Database must be pickle-able and MUST NOT contain any reference loops</b>.
 
-Dictionary we've created can be used to store any kind of data. In this scenarion, we will use ```emoji``` (type ```string```) as key and language code as value.
+Dictionary we've created can be used to store any kind of data. In this scenarion, we will use ```emoji``` <i>(type ```string```)</i> as key and language code as value.
 
 ```py
 def PartialToFullReaction(PartialEmoji, message):
@@ -108,24 +108,24 @@ Triggers.Get("on_guild_join").Add(func) # async func(local_env, guild)
 Triggers.Get("on_guild_remove").Add(func) # async func(local_env, guild)
 Triggers.Get("on_ready").Add(func) # async func()
 ```
-All triggers and parameters are self explanatory or taken directly from ```discord.py``` so I won't describe them. ```local_env``` is ```GuildEnv``` of server (guild) within which this trigger was called. Also it's worth noting that <b>Zeke ignores messages and reactions sent in DM or by other bots</b>. You can get DMs with ```on_dm``` trigger but given guild-oriented focus of this bot, there's little support for that (f.e. ```Database``` only works with guilds, not DMs)  
+All triggers and parameters are self explanatory or taken directly from ```discord.py``` so I won't describe them. ```local_env``` is ```GuildEnv``` of server (guild) within which this trigger was called. Also it's worth noting that <b>Zeke ignores messages and reactions sent in DM or by other bots</b>. You can get DMs with ```on_dm``` trigger but given guild-oriented focus of this bot, there's little support for that <i>(f.e. ```Database``` only works with guilds, not DMs)</i>  
 
 There are also strictly Zeke's triggers
 ```py
 Triggers.Get("Initialisation").Add(func) # async func()
 Triggers.Get("Status").Add(func) # async func(), returns (name:string, result:bool, err_mess:string)
 ```
-```Initialisation``` is called after the entire engine (especially ```EnvVars```) is initialised. ```Status``` deserves own chapter, but in short: it's used to create status check for given feature (useful to detect and debug problems with 3rd party integrations)
+```Initialisation``` is called after the entire engine <i>(especially ```EnvVars```)</i> is initialised. ```Status``` deserves own chapter, but in short: it's used to create status check for given feature <i>(useful to detect and debug problems with 3rd party integrations)</i>
 
 # Security
 
 First of all, I've no education in computer security. I've tried to add encryption to all long-term storage data, but i don't have expertise to verify if the approach taken is actually secure. That being said, let me explain what's in the code.  
 
-Database stores data in dictionary in form ```dict[hash(guild_id)] = GuildEnv()```. Any request for environment of guild not present in this dictionary warrants a request for ```Storage``` to load data from remote storage. If there's no file with data for this guild, new enviroment (copy of ```Default```) is created and returned.  
+Database stores data in dictionary in form ```dict[hash(guild_id)] = GuildEnv()```. Any request for environment of guild not present in this dictionary warrants a request for ```Storage``` to load data from remote storage. If there's no file with data for this guild, new enviroment <i>(copy of ```Default```)</i> is created and returned.  
 
-Data of guild is stored in file named ```hash(guild_id)```. ```hash``` (in all cases) means PBKDF2, which uses guild_id AND random salt (automatically generated and stored in ```.salt.dump``` 24-byte long string of random bytes). This ensures that, even if connection or the remote storage itself is compromised, you can't even correlate those files to particular discord guilds.  
+Data of guild is stored in file named ```hash(guild_id)```. ```hash``` <i>(in all cases)</i> means PBKDF2, which uses guild_id AND random salt <i>(automatically generated and stored in ```.salt.dump``` 24-byte long string of random bytes)</i>. This ensures that, even if connection or the remote storage itself is compromised, you can't even correlate those files to particular discord guilds.  
 
-The data itself is encrypted with ```AES``` algorithm using 24-bytes long key (also automatically generated and stored in ```.aeskey.dump```). Encryption requires pickle-dumping of data, converting whole ```GuildEnv``` (except ```Temporary``` part) into binary string. SHA256 is used to compute hash of this binary string before encryption. Then, Initialisation Vector (IV) is randomly generated. Finally, binary string of data is encrypted into cipher. Tuple of all three ```(IV, cipher, hash)``` is then again pickle-dumped into binary string - which is returned.  
+The data itself is encrypted with ```AES``` algorithm using 24-bytes long key <i>(also automatically generated and stored in ```.aeskey.dump```)</i>. Encryption requires pickle-dumping of data, converting whole ```GuildEnv``` <i>(except ```Temporary``` part)</i> into binary string. SHA256 is used to compute hash of this binary string before encryption. Then, Initialisation Vector (IV) is randomly generated. Finally, binary string of data is encrypted into cipher. Tuple of all three ```(IV, cipher, hash)``` is then again pickle-dumped into binary string - which is returned.  
 
 Decryption pretty much reverses this process, pickle-loading, decrypting and verifying hash. Note that pickle-dumping and pickle-loading is considered <b>INSECURE</b> in python and may run any code on server's machine if your storage is hacked. 
 
