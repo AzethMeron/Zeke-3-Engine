@@ -121,7 +121,7 @@ Triggers.Get("Status").Add(func) # async func(), returns (name:string, result:bo
 
 First of all, I've no education in computer security. I've tried to add encryption to all long-term storage data, but i don't have expertise to verify if the approach taken is actually secure. That being said, let me explain what's in the code.  
 
-Database stores data in dictionary in form ```dict[hash(guild_id)] = GuildEnv()```. Any request for environment of guild not present in this dictionary warrants a request for ```Storage``` to load data from remote storage. If there's no file with data for this guild, new enviroment (copy of ```default```) is created and returned.  
+Database stores data in dictionary in form ```dict[hash(guild_id)] = GuildEnv()```. Any request for environment of guild not present in this dictionary warrants a request for ```Storage``` to load data from remote storage. If there's no file with data for this guild, new enviroment (copy of ```Default```) is created and returned.  
 
 Data of guild is stored in file named ```hash(guild_id)```. ```hash``` (in all cases) means PBKDF2, which uses guild_id AND random salt (automatically generated and stored in ```.salt.dump``` 24-byte long string of random bytes). This ensures that, even if connection or the remote storage itself is compromised, you can't even correlate those files to particular discord guilds.  
 
