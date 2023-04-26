@@ -44,9 +44,10 @@ To add a feature, you should create .py file in ```.features/``` directory. It w
 At first, let's load all of important modules. <b>We won't use all of them</b>, but here's import-recipe for you.
 ```py
 from triggers import objectTriggers as Triggers
-from triggers import objectGlobalTimers as GlobalTimers
 from triggers import objectTimers as Timers
+from triggers import objectGlobalTimers as GlobalTimers
 from tools import objectTools as Tools
+from tools import objectTranslateTools as TranslateTools
 from database import objectDatabase as Database
 from cmdparser import objectMainParser as MainParser
 from cmdparser import Parser, Command
@@ -56,7 +57,36 @@ from discordbot import DiscordBot
 
 Usually first thing within the script is to add some data to default environment of guilds. ```Database.Default``` (type ```GuildEnv```) is default environment which is used to update every existing guild environment. <b>TL:DR if you add something to ```Database.Default``` it will appear in every guild environment, including existing ones</b>.  
 
+Let's take simplified code of ```translate.py```:
+```py
+Database.Default.Settings.AddDefault("reaction_translator", dict()) # dict[emoji] = tgt_lang
+```
+Here we create new dictionary ```dict()``` and store it in ```Env``` (from ```guildenv.py```), inside ```Settings``` part, under name ```reaction_translator```. ```Env``` has three attributes: ```Settings```, ```Data```, ```Temporary```. They're the same except ```Temporary``` is lost on shutdown. <b>All data stored in Database must be pickle-able and MUST NOT contain any reference loops</b>.
 
+Dictionary we've created can be used to store any kind of data. In this scenarion, we will use ```emoji``` (type ```string```) as key and language code as value.
+
+```py
+def PartialToFullReaction(PartialEmoji, message):
+    for reaction in message.reactions:
+        if str(PartialEmoji) == str(reaction): return reaction
+    return None
+
+async def on_raw_reaction_add(local_env, payload, PartialEmoji, member, guild, message):
+    if message.author.bot: return # Skip if reaction added to bot's message
+    if len(message.content) < 4: return # Skip if it's nearly empty message
+    reaction = PartialToFullReaction(PartialEmoji, message) # Get full version of partial reaction (those are discord types)
+    if reaction and reaction.count > 1: return # Skip if there're more such reactions already added
+    emoji = str(PartialEmoji) # Stringify emoji - key for our dictionary
+    text = message.content # Get text of the message
+    reaction_translator = local_env.Settings.Get("reaction_translator")
+    if emoji in reaction_translator: # if emoji is programmed to translate message
+        tgt_lang = reaction_translator[emoji] # get target language
+        src_lang = "auto"
+        (src_lang, _, translated) = TranslateTools.Translate(text, tgt_lang)
+        await message.add_reaction(PartialEmoji)
+        #await PostMessage(message, member, translated, src_lang, tgt_lang) # send message with translation
+Triggers.Get("on_raw_reaction_add").Add(on_raw_reaction_add)
+```
 
 # Security
 
