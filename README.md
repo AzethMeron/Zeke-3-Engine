@@ -183,6 +183,10 @@ Command(name, obj, [Help, LongHelp, StaticPerms, DynamicPerms])
 
 ---
 
+# Database
+
+---
+
 # Status check
 
 ---
