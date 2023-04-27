@@ -156,10 +156,30 @@ Triggers.Get("Status").Add(func) # async func(), returns (name:string, result:bo
 
 # Command Parser
 
+```py
+parser = Parser("translate")
+parser.Add( Command("add", cmd_add, Help = "Add emoji translation for language.", LongHelp = "Add emoji translation for language.\nSyntax: TRAIL <emoji> <language>") )
+#parser.Add( Command("remove", cmd_remove, Help = "Remove emoji translation for language.", LongHelp = "Remove emoji translation for language.\nSyntax: TRAIL <emoji>") )
+#parser.Add( Command("list", cmd_list, Help = "Display list of current emojis used in translations.", LongHelp = "Display list of current emojis used in translations.\nSyntax: TRAIL") )
+#parser.Add( Command("custom", cmd_custom, Help = "Display list of available custom languages.", LongHelp = "Display list of available custom languages.\nNot real languages obviously.\nSyntax: TRAIL") )
+MainParser.Add( Command(parser.Name(), parser, Help = "Setup translation feature", StaticPerms=discord.Permissions.all()) )
+```
+
 ![parser](https://user-images.githubusercontent.com/41695668/234835385-3b772c5f-6cd7-4c3b-8a1d-c6f22ec412a2.png)
 
 buba buba  
-```Parser(name)``` requires only ```name:string``` to create. ```Command(...)``` is more complicated, it requires: ```name:string, obj:async func(ctx, args,trail) OR Parser, Help = :string, LongHelp = :string, StaticPerms = :discord.Permissions```, although only ```name``` and ```obj``` are strictly required, rest is optional. 
+```
+Parser(name)
+    name: string - 
+
+Command(name, obj, [Help, LongHelp, StaticPerms, DynamicPerms])
+    name: string - 
+    obj: Command | Parser - 
+    Help: string - optional
+    LongHelp: string - optional
+    StaticPerms: discord.Permissions - optional
+    DynamicPerms: func(ctx) - optional
+```
 
 ---
 
