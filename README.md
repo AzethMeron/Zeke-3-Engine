@@ -156,6 +156,8 @@ Triggers.Get("Status").Add(func) # async func(), returns (name:string, result:bo
 
 # Command Parser
 
+![parser](https://user-images.githubusercontent.com/41695668/234835385-3b772c5f-6cd7-4c3b-8a1d-c6f22ec412a2.png)
+
 buba buba  
 ```Parser(name)``` requires only ```name:string``` to create. ```Command(...)``` is more complicated, it requires: ```name:string, obj:async func(ctx, args,trail) OR Parser, Help = :string, LongHelp = :string, StaticPerms = :discord.Permissions```, although only ```name``` and ```obj``` are strictly required, rest is optional. 
 
