@@ -121,7 +121,7 @@ parser.Add( Command("add", cmd_add, Help = "Add emoji translation for language."
 MainParser.Add( Command(parser.Name(), parser, Help = "Setup translation feature", StaticPerms=discord.Permissions.all()) )
 ```
 
-```Parser(name)``` requires only ```name:string``` to create. ```Command(...)``` is more complicated, it requires: ```name:string, obj:async func(ctx, args,trail) OR Parser, Help = :string, LongHelp = :string, StaticPerms = :discord.Permissions```, although only ```name``` and ```obj``` are strictly required, rest is optional. 
+Syntax for commands and parsers will be described more in another chapter.
 
 ---
 
@@ -155,6 +155,9 @@ Triggers.Get("Status").Add(func) # async func(), returns (name:string, result:bo
 ---
 
 # Command Parser
+
+buba buba  
+```Parser(name)``` requires only ```name:string``` to create. ```Command(...)``` is more complicated, it requires: ```name:string, obj:async func(ctx, args,trail) OR Parser, Help = :string, LongHelp = :string, StaticPerms = :discord.Permissions```, although only ```name``` and ```obj``` are strictly required, rest is optional. 
 
 ---
 
