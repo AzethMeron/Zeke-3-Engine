@@ -171,7 +171,7 @@ In this case, control flows into ```MainParser``` which calls ```translate``` ``
 
 ![parser](https://user-images.githubusercontent.com/41695668/234835385-3b772c5f-6cd7-4c3b-8a1d-c6f22ec412a2.png)
 
-Tree-like structure allows to group commands together and makes it overall easier to deal with when there's a lot of them. <b>Custom ```Parser``` also supports static and dynamic ```permissions```</b>.
+Tree-like structure allows to group commands together and makes it overall easier to deal with when there's a lot of them. <b>Custom ```Parser``` also supports static and dynamic permissions</b>.
 
 Example of code how to create local parser and attach it to ```MainParser```.
 
@@ -206,6 +206,16 @@ In both ```Help``` and ```LongHelp``` keyword <b>TRAIL</b> can be used, it gets 
 
 # Database
 
+```py
+async def cmd(ctx, args, trail):
+    local_env = Database.GetGuildEnv(ctx.guild.id) # type: GuildEnv
+    #local_env.Data # type: Env
+    #local_env.Settings # type: Env
+    #local_env.Temporary # type: Env
+    user_env = Database.GetUserEnv(local_env, ctx.author.id) # type: Env
+    val = local_env.Settings.Get("keyword")
+    local_env.Settings.Set("keyword", val)
+```
 ---
 
 # Status check
