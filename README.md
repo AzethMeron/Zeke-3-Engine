@@ -200,7 +200,7 @@ Command(name, obj, [Help, LongHelp, StaticPerms, DynamicPerms])
 
 ```DynamicPerms``` can be used to f.e. make sure that user is connected to voice chat when issuing command. To be allowed to use a command, user must pass both ```StaticPerms``` and ```DynamicPerms``` check.
 
-In both ```Help``` and ```LongHelp``` keyword <b>TRAIL</b> can be used, it gets replaced with total trail of commands (in above example, TRAIL = zeke translate add)
+In both ```Help``` and ```LongHelp``` keyword <b>TRAIL</b> can be used, it gets replaced with total trail of commands <i>(in above example, TRAIL = zeke translate add)</i>
 
 ---
 
