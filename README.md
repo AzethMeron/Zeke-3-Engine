@@ -171,7 +171,7 @@ In this case, control flows into ```MainParser``` which calls ```translate``` ``
 
 ![parser](https://user-images.githubusercontent.com/41695668/234835385-3b772c5f-6cd7-4c3b-8a1d-c6f22ec412a2.png)
 
-Tree-like structure allows to group commands together and makes it overall easier to deal with when there's a lot of them. <b>Custom ```Parser``` also supports static and dynamic permissions```</b>.
+Tree-like structure allows to group commands together and makes it overall easier to deal with when there's a lot of them. <b>Custom ```Parser``` also supports static and dynamic ```permissions```</b>.
 
 Example of code how to create local parser and attach it to ```MainParser```.
 
@@ -199,6 +199,8 @@ Command(name, obj, [Help, LongHelp, StaticPerms, DynamicPerms])
 ```
 
 ```DynamicPerms``` can be used to f.e. make sure that user is connected to voice chat when issuing command. To be allowed to use a command, user must pass both ```StaticPerms``` and ```DynamicPerms``` check.
+
+In both ```Help``` and ```LongHelp``` keyword <b>TRAIL</b> can be used, it gets replaced with total trail of commands (in above example, TRAIL = zeke translate add)
 
 ---
 
