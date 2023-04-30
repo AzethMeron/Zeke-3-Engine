@@ -15,6 +15,7 @@ Deals with most of back-end so you can focus on creation of functionality.
 - Status check <i>(test integration with third-party services)</i>
 - Translation and language detection
 - Automatic loading of ```.py``` files in ```.features/``` subdirectory
+- Code simple enough so every programmer can figure it out and tune
 - Translation using emojis as example what it can be used for :)
 
 ---
@@ -156,6 +157,24 @@ Triggers.Get("Status").Add(func) # async func(), returns (name:string, result:bo
 
 # Command Parser
 
+Zeke comes with custom-made command parser to give programmer more control. <b>It uses two important classes: ```Command``` and ```Parser```</b>. ```Command``` represents singular function <i>(leaf in parser tree)</i>, while ```Parser``` controls control flow through the branches. I think it will make more sense when explained with examples:
+
+```
+zeke help
+```
+In this case, control flows into ```MainParser``` <i>(root of the parser tree, the main ```Parser``` of bot)</i> which then calls ```help``` ```Command```. 
+
+```
+zeke translate add <emoji> <lang>
+```
+In this case, control flows into ```MainParser``` which calls ```translate``` ```Command```. This command contains another instance of ```Parser```, meaning it passes the <i>(flows)</i> control forward, to ```add``` ```Command```. ```<emoji>``` and ```<lang>``` are ```args``` for this command.
+
+![parser](https://user-images.githubusercontent.com/41695668/234835385-3b772c5f-6cd7-4c3b-8a1d-c6f22ec412a2.png)
+
+Tree-like structure allows to group commands together and makes it overall easier to deal with when there's a lot of them. <b>Custom ```Parser``` also supports static and dynamic permissions```.
+
+Example of code how to create local parser and attach it to ```MainParser```.
+
 ```py
 parser = Parser("translate")
 parser.Add( Command("add", cmd_add, Help = "Add emoji translation for language.", LongHelp = "Add emoji translation for language.\nSyntax: TRAIL <emoji> <language>") )
@@ -165,21 +184,21 @@ parser.Add( Command("add", cmd_add, Help = "Add emoji translation for language."
 MainParser.Add( Command(parser.Name(), parser, Help = "Setup translation feature", StaticPerms=discord.Permissions.all()) )
 ```
 
-![parser](https://user-images.githubusercontent.com/41695668/234835385-3b772c5f-6cd7-4c3b-8a1d-c6f22ec412a2.png)
 
-buba buba  
 ```
 Parser(name)
-    name: string - 
+    name: string - Name of the parser, used f.e. in built-in help. Should be the same as name of "overlying" Command.
 
 Command(name, obj, [Help, LongHelp, StaticPerms, DynamicPerms])
-    name: string - 
-    obj: Command | Parser - 
-    Help: string - optional
-    LongHelp: string - optional
-    StaticPerms: discord.Permissions - optional
-    DynamicPerms: func(ctx) - optional
+    name: string - Name of command (used to call it)
+    obj: async func(ctx,args,trail) | Parser - command-function or another parser
+    Help: string - optional, short (one line) help for this command
+    LongHelp: string - optional, long help for this command, it's the same as Help if unset
+    StaticPerms: discord.Permissions - optional, minimal permissions required from user to use this command
+    DynamicPerms: func(ctx) - optional, return True if user is allowed to use given command in given context
 ```
+
+```DynamicPerms``` can be used to f.e. make sure that user is connected to voice chat when issuing command. To be allowed to use a command, user must pass both ```StaticPerms``` and ```DynamicPerms``` check.
 
 ---
 
