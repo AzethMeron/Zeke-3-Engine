@@ -206,6 +206,12 @@ In both ```Help``` and ```LongHelp``` keyword <b>TRAIL</b> can be used, it gets 
 
 # Database
 
+Zeke provides ```GuildEnv``` for every guils <i>(server)</i> bot is connected to. Each ```GuildEnv``` has three ```Env```s within it: ```Data```, ```Settings```, ```Temporary```. Those are exactly the same, <b>except ```Temporary``` is cleaned on reboot</b>. All saved data is encrypted <i>(check chapter Security)</i>.  
+
+```Env``` provides three most imporant functions: ```Get(keyword)```, ```Set(keyword, value)```, ```AddDefault(keyword, value)```. 
+
+Within ```GuildEnv``` there's also dictionary with ```Env```s for every member of guild. You can access those environments by using ```Database.GetUserEnv(GuildEnv, user_id)```
+
 ```py
 async def cmd(ctx, args, trail):
     local_env = Database.GetGuildEnv(ctx.guild.id) # type: GuildEnv
