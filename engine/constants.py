@@ -1,5 +1,5 @@
 
-PREFIX="zk3"
+PREFIX="zeke"
 ENGINE_REPO="https://github.com/AzethMeron/Zeke-3-Engine"
 FEATURES_DIR=".features"
 ALIAS_SPECIAL_CHAR="$"
