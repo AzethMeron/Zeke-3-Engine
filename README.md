@@ -215,6 +215,7 @@ Within ```GuildEnv``` there's also dictionary with ```Env```s for every member o
 Here's recipe for some things that can be done with ```Database``` object.
 
 ```py
+#Database.Default # type: GuildEnv
 Database.Default.Settings.AddDefault("keyword", 0)
 async def cmd(ctx, args, trail):
     local_env = Database.GetGuildEnv(ctx.guild.id) # type: GuildEnv
@@ -225,9 +226,32 @@ async def cmd(ctx, args, trail):
     val = local_env.Settings.Get("keyword")
     local_env.Settings.Set("keyword", val + 1)
 ```
+
+By default, ```Database``` uses ```Dropbox``` to store files, however it's designed to be compatible with abstract class ```Storage``` so if you implement all methods declared there, you can easily swap dropbox for something else - for example, local storage.
+
 ---
 
 # Status check
+
+Status check is feature of engine that simplifies debugging of 3rd party integrations. Translator and language detection in ```tools.py``` are a good example here.
+
+```py
+    async def translator_status(self):
+        pl_text = "Dzisiaj jest piękny dzień. W dni takie jak te, dzieci twojego pokroju..."
+        try:
+            self.__rawTranslate(pl_text, 'pl', 'en')
+            return ( "Translation integration", True, "Unknown" )
+        except Exception as e:
+            return ( "Translation integration", False, str(e) )
+    async def detector_status(self):
+        pl_text = "Dzisiaj jest piękny dzień. W dni takie jak te, dzieci twojego pokroju..."
+        detect = True if self.DetectLanguage(pl_text) == 'pl' else False
+        return ( "Detect language integration", detect, "Unknown" )
+Triggers.Get("Status").Add(objectTranslateTools.translator_status)
+Triggers.Get("Status").Add(objectTranslateTools.detector_status)
+```
+
+Status is a ```Trigger``` that receives no arguments ```async func()```, but must return values: ```(name: string, isOk: bool, errMess: string)```. The last returned value - ```errMess``` - is used only if ```isOk = False```.
 
 ---
 
