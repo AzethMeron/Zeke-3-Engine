@@ -212,7 +212,10 @@ Zeke provides ```GuildEnv``` for every guils <i>(server)</i> bot is connected to
 
 Within ```GuildEnv``` there's also dictionary with ```Env```s for every member of guild. You can access those environments by using ```Database.GetUserEnv(GuildEnv, user_id)```
 
+Here's recipe for some things that can be done with ```Database``` object.
+
 ```py
+Database.Default.Settings.AddDefault("keyword", 0)
 async def cmd(ctx, args, trail):
     local_env = Database.GetGuildEnv(ctx.guild.id) # type: GuildEnv
     #local_env.Data # type: Env
@@ -220,7 +223,7 @@ async def cmd(ctx, args, trail):
     #local_env.Temporary # type: Env
     user_env = Database.GetUserEnv(local_env, ctx.author.id) # type: Env
     val = local_env.Settings.Get("keyword")
-    local_env.Settings.Set("keyword", val)
+    local_env.Settings.Set("keyword", val + 1)
 ```
 ---
 
