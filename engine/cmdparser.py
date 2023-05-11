@@ -14,7 +14,7 @@ from constants import PREFIX
 
 # KEYWORDS FOR HELP
 # NAME - name of command
-# TRAIL - all of names of commands up to this point ("zeke music play" -> TRAIL=["zeke", "music"])
+# TRAIL - all of names of commands up to this point ("zeke music play" -> TRAIL=["zeke", "music", "play"])
 
 class Command:
     def __init__(self, Name, obj, Help = "TODO", LongHelp = None, StaticPerms = discord.Permissions.none(), DynamicPerms = lambda ctx: True):
