@@ -66,7 +66,7 @@ class Parser:
             availableCommands.sort()
             admin_role = get_admin_role(ctx, trail, ctx.message.author)
             mess = ["Syntax: " + ' '.join(trail) + " <command>"]
-            if admin_role: mess.append(f"Priviledged role: {admin_role.mention}")
+            if admin_role: mess.append(f"Priviledged role: {admin_role.name}")
             for cmd in availableCommands:
                 Command = self.__commands[cmd]
                 mess.append('{0: <10}'.format(cmd) + Command.Help)
@@ -203,15 +203,16 @@ def admin_role_check(ctx, trail, author):
 def get_admin_role(ctx, trail, author):
     local_env = Database.GetGuildEnv(ctx.guild.id)
     admin_roles = local_env.Settings.Get("admin_roles")
-    key = ' '.join(rail)
+    key = ' '.join(trail)
     if key not in admin_roles: return None
     role_id = admin_roles[key]
     return ctx.guild.get_role(role_id)
 async def cmd_admin_role(ctx, args, trail):
     local_env = Database.GetGuildEnv(ctx.guild.id)
     admin_roles = local_env.Settings.Get("admin_roles")
-    key = ' '.join(rail)
+    key = ' '.join(trail)
     if len(ctx.message.role_mentions) == 0: 
+        if key not in admin_roles: raise RuntimeError("Priviledged role not set")
         del admin_roles[key]
     else:
         admin_roles[key] = ctx.message.role_mentions[0].id
