@@ -36,7 +36,7 @@ class Parser:
         role_check = admin_role_check(ctx, trail, author)
         static_check = author.guild_permissions >= command.StaticPerms
         dynamic_check = command.DynamicPerms(ctx)
-        return (static_check and (dynamic_check or role_check))
+        return (dynamic_check and (static_check or role_check))
     def __BinaryPermssionCheck(self, ctx, trail, command, author):
         try:
             return self.__PermissionCheck(ctx, trail, command, author)
@@ -220,5 +220,3 @@ async def cmd_bundle(ctx, args, trail):
     return True
     
 objectMainParser.Add( Command("bundle", cmd_bundle, Help = "Execute multiple commands in one go", LongHelp = "Execute multiple commands in one go.\nSyntax: TRAIL <command> ; <command> ; ... ; <command>\nTo separate commands, use ';' character.\nDo not use aliases in bundles please.") )
-
-        
