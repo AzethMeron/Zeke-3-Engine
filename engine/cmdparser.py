@@ -79,7 +79,7 @@ class Parser:
     def Add(self, command):
         name = command.Name
         if name in self.__commands:
-            raise RuntimeError(f"{cmd} already present in parser {self.Name}")
+            raise RuntimeError(f"{cmd} already present in parser {self.Name()}")
         self.__commands[name] = command
     async def __call__(self, ctx, args, trail):
         return await self.Call(ctx, args, trail)
