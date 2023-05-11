@@ -66,6 +66,14 @@ Bundle is another feature of parser, allowing you to bundle multiple commands in
 
 ---
 
+# Admin roles / Priviledged roles
+
+Custom parser of Zeke has also support for admin roles - Discord roles that allow user to use any command regardless of their permissions on the server. <b>Every ```Parser``` object has it's own admin role</b> and it propagates to all ```Parser```s under it <i>(so adding role as priviledged role for ```MainParser``` will allow users to use literally any command there's)</i>
+
+Admin roles can be configured with ```admrole``` command, included in every ```Parser``` object. In case of ```MainParser```: ```zeke admrole <mention_role>```. 
+
+---
+
 # Introduction, how-to-use
 
 To add a feature, you should create .py file in ```.features/``` directory. It will be automatically loaded on startup and you can "attach" your own code to the main process using ```Triggers```. It may sound complicated so let me show an example
@@ -220,7 +228,7 @@ Command(name, obj, [Help, LongHelp, StaticPerms, DynamicPerms])
     DynamicPerms: func(ctx) - optional, return True if user is allowed to use given command in given context
 ```
 
-```DynamicPerms``` can be used to f.e. make sure that user is connected to voice chat when issuing command. To be allowed to use a command, user must pass both ```StaticPerms``` and ```DynamicPerms``` check.
+```DynamicPerms``` can be used to f.e. make sure that user is connected to voice chat when issuing command. For a user to be able to use the command, it must pass a permission check: ```Check = DynamicCheck and (StaticPerms or AdminRole)```
 
 In both ```Help``` and ```LongHelp``` keyword <b>TRAIL</b> can be used, it gets replaced with total trail of commands <i>(in above example, TRAIL = zeke translate add)</i>
 
