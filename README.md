@@ -60,9 +60,17 @@ Custom parser of Zeke has feature called ```alias```, which allows you to replac
 
 now by using ```add_alias``` you can call ```zeke alias add```. Character ```$``` is used before keyword when you want to add or remove alias, but not when actually using this alias <i>(it's done for implementation reason: aliases are replaced before feeding command into parser, meaning removal would be impossible cuz name would be immediately replaced with full command)</i>. Alias can be used to change to <b>"change" bot's prefix</b>: ```zeke alias add $zk zeke``` allows you to use ```zk``` instead of ```zeke```.
 
-Note that you might accidently or purposely break the bot with aliases. For example, ```zeke alias add $zeke broken``` would replace ```zeke``` <i>(which is main command prefix)</i> with ```broken``` <i>(which is just text, not any command)</i> and parser would ignore this message, meaning <b>using any command would be impossible</b>. To mitigate this problem, I've implemented <b>no-alias mode</b>. By starting command with ```$```, like ```$zeke alias remove $zeke```, you can prevent aliases from replacing keywords, allowing you to remove problematic aliases.
+Note that you might accidently or purposely break the bot with aliases. For example, ```zeke alias add $zeke broken``` would replace ```zeke``` <i>(which is main command prefix)</i> with ```broken``` <i>(which is just text, not any command)</i> and parser would ignore this message, meaning <b>using any command would be impossible</b>. To mitigate this problem, I've implemented <b>no-alias mode</b>. You can block aliases by starting command with ```$``` character, allowing you to remove problematic aliases:  ```$zeke alias remove $zeke```.
 
 Bundle is another feature of parser, allowing you to bundle multiple commands into one. Usage  ```zeke bundle command1 ; command2 ; command3```. ```;``` is used as separator for commands.
+
+---
+
+# Admin roles / Priviledged roles
+
+Custom parser of Zeke has also support for admin roles - Discord roles that allow user to use any command regardless of their permissions on the server. <b>Every ```Parser``` object has it's own admin role</b> and it propagates to all ```Parser```s under it <i>(so adding role as priviledged role for ```MainParser``` will allow users to use literally any command there's)</i>
+
+Admin roles can be configured with ```admrole``` command, included in every ```Parser``` object. In case of ```MainParser```: ```zeke admrole <mention_role>```. 
 
 ---
 
@@ -220,7 +228,7 @@ Command(name, obj, [Help, LongHelp, StaticPerms, DynamicPerms])
     DynamicPerms: func(ctx) - optional, return True if user is allowed to use given command in given context
 ```
 
-```DynamicPerms``` can be used to f.e. make sure that user is connected to voice chat when issuing command. To be allowed to use a command, user must pass both ```StaticPerms``` and ```DynamicPerms``` check.
+```DynamicPerms``` can be used to f.e. make sure that user is connected to voice chat when issuing command. For a user to be able to use the command, it must pass a permission check: ```Check = DynamicCheck and (StaticPerms or AdminRole)```
 
 In both ```Help``` and ```LongHelp``` keyword <b>TRAIL</b> can be used, it gets replaced with total trail of commands <i>(in above example, TRAIL = zeke translate add)</i>
 
