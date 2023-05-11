@@ -7,6 +7,7 @@ from tools import objectTools as Tools
 import aes as AES
 import log as Log
 from constants import AESKEY_FILENAME
+import zlib
 
 import copy
 import pickle
@@ -128,6 +129,7 @@ class Database:
     def __saveOne(self, key):
         guildenv = self.__guilds[key]
         data = guildenv.Pickle()
+        data = zlib.compress(data)
         cipher = AES.Encrypt( self.__aeskey(), data)
         self.__storage.Save(cipher, key)
     def __loadOne(self, key): 
@@ -135,6 +137,10 @@ class Database:
             tmp = self.__storage.Load(key)
             if tmp:
                 tmp = AES.Decrypt( self.__aeskey(), tmp)
+                try: # ignore exception - only for migration
+                    tmp = zlib.decompress(tmp)
+                except:
+                    pass
                 self.__guilds[key] = GuildEnv.Unpickle(tmp)
                 self.__guilds[key].Update(self.Default)
                 return True
