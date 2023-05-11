@@ -31,17 +31,18 @@ class Parser:
         self.__commands = dict()
         self.__name = Name
         self.Add( Command("help", self.HelpCmd, Help = "Access help of given command", LongHelp = "Access help of given command\nSyntax: TRAIL <command> - access help about given command") ) 
-    def __PermissionCheck(self, ctx, command, author):
+    def __PermissionCheck(self, ctx, trail, command, author):
+        role_check = admin_role_check(ctx, trail, author)
         static_check = author.guild_permissions >= command.StaticPerms
         dynamic_check = command.DynamicPerms(ctx)
-        return (static_check and dynamic_check)
-    def __BinaryPermssionCheck(self, ctx, command, author):
+        return (static_check and (dynamic_check or role_check))
+    def __BinaryPermssionCheck(self, ctx, trail, command, author):
         try:
-            return self.__PermissionCheck(ctx, command, author)
+            return self.__PermissionCheck(ctx, trail, command, author)
         except:
             return False
-    def __GetSimilarCommands(self, ctx, cmd, author):
-        commandNames = [ cmd for cmd in self.__commands if self.__BinaryPermssionCheck(ctx, self.__commands[cmd], author) ]
+    def __GetSimilarCommands(self, ctx, trail, cmd, author):
+        commandNames = [ cmd for cmd in self.__commands if self.__BinaryPermssionCheck(ctx, trail, self.__commands[cmd], author) ]
         commandNames.sort(key = lambda x: -fuzz.ratio(x, cmd))
         return commandNames
     def Name(self):
@@ -51,7 +52,7 @@ class Parser:
             next_cmd = args.pop(0)
             trail.append(next_cmd)
             if next_cmd not in self.__commands:
-                similar = self.__GetSimilarCommands(ctx, next_cmd, ctx.message.author)
+                similar = self.__GetSimilarCommands(ctx, trail, next_cmd, ctx.message.author)
                 raise RuntimeError(f"Command {next_cmd} not found. Did you mean {similar[0]}")
             command = self.__commands[next_cmd]
             if type(command.obj) == Parser: # help parser
@@ -61,16 +62,17 @@ class Parser:
                 mess = mess.replace("NAME", next_cmd)
                 return mess
         else: # Not parametrized, parser help
-            availableCommands = [ cmd for cmd in self.__commands if self.__BinaryPermssionCheck(ctx, self.__commands[cmd], ctx.message.author) ]
+            availableCommands = [ cmd for cmd in self.__commands if self.__BinaryPermssionCheck(ctx, trail, self.__commands[cmd], ctx.message.author) ]
             availableCommands.sort()
-            mess = ["Syntax: " + ' '.join(trail) + " <command>"] 
+            admin_role = get_admin_role(ctx, trail, author)
+            mess = ["Syntax: " + ' '.join(trail) + " <command>"]
+            if admin_role: mess.append(f"Priviledged role: {admin_role.mention}")
             for cmd in availableCommands:
                 Command = self.__commands[cmd]
                 mess.append('{0: <10}'.format(cmd) + Command.Help)
             return "\n".join(mess)
     async def HelpCmd(self, ctx, args, trail):
-        mess = self.Help(ctx, args, trail)
-        await Tools.DcReply(ctx.message, mess, lambda t: Tools.DcWrapCode(t), DeleteAfter = None)
+        await Tools.DcReply(ctx.message, mess, lambda t: Tools.DcWrapCode(t), DeleteAfter = None)        mess = self.Help(ctx, args, trail)
         return True
     def Add(self, command):
         name = command.Name
@@ -84,10 +86,10 @@ class Parser:
         trail.append( self.Name() )
         cmd = args.pop(0)
         if cmd not in self.__commands:
-            similar = self.__GetSimilarCommands(ctx, cmd, ctx.message.author)
+            similar = self.__GetSimilarCommands(ctx, trail, cmd, ctx.message.author)
             raise RuntimeError(f'Command "{cmd}" not found. Did you mean "{similar[0]}"?')
         command = self.__commands[cmd]
-        if self.__PermissionCheck(ctx, command, ctx.message.author): # check both requirements
+        if self.__PermissionCheck(ctx, trail, command, ctx.message.author): # check both requirements
             return await command.obj(ctx, args, trail)
         else:
             raise RuntimeError("Insufficent permissions")
@@ -98,7 +100,7 @@ objectMainParser = Parser(PREFIX)
 # Aliases 
 
 from constants import ALIAS_SPECIAL_CHAR
-Database.Default.Settings.Set("aliases", dict())
+Database.Default.Settings.AddDefault("aliases", dict())
 
 def ParseAliases(local_env, content):
     aliases = local_env.Settings.Get("aliases")
@@ -182,3 +184,34 @@ async def cmd_bundle(ctx, args, trail):
     return True
     
 objectMainParser.Add( Command("bundle", cmd_bundle, Help = "Execute multiple commands in one go", LongHelp = "Execute multiple commands in one go.\nSyntax: TRAIL <command> ; <command> ; ... ; <command>\nTo separate commands, use ';' character.\nDo not use aliases in bundles please.") )
+
+#####################################################################################################
+# Admin role
+
+Database.Default.Settings.AddDefault("admin_roles", dict()) # dict[' '.join(subtrail)] = admin_role_id
+def admin_role_check(ctx, trail, author):
+    local_env = Database.GetGuildEnv(ctx.guild.id)
+    admin_roles = local_env.Settings.Get("admin_roles")
+    for index in range (1, len(trail)):
+        key = ' '.join(trail[:index])
+        if key in admin_roles:
+            role_id = admin_roles[key]
+            if author.get_role(role_id):
+                return True
+    return False
+def get_admin_role(ctx, trail, author):
+    local_env = Database.GetGuildEnv(ctx.guild.id)
+    admin_roles = local_env.Settings.Get("admin_roles")
+    key = ' '.join(rail)
+    if key not in admin_roles: return None
+    role_id = admin_roles[key]
+    return ctx.guild.get_role(role_id)
+async def cmd_admin_role(ctx, args, trail):
+    local_env = Database.GetGuildEnv(ctx.guild.id)
+    admin_roles = local_env.Settings.Get("admin_roles")
+    key = ' '.join(rail)
+    if len(ctx.message.role_mentions) == 0: 
+        del admin_roles[key]
+    else:
+        admin_roles[key] = ctx.message.role_mentions[0].id
+objectMainParser.Add( Command("admrole", cmd_admin_role) )
