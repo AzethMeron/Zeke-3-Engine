@@ -31,6 +31,7 @@ class Parser:
         self.__commands = dict()
         self.__name = Name
         self.Add( Command("help", self.HelpCmd, Help = "Access help of given command", LongHelp = "Access help of given command\nSyntax: TRAIL <command> - access help about given command") ) 
+        self.Add( Command("admrole", cmd_admin_role, Help = "Add/Remove priviledged (admin) role", LongHelp = "Add/Remove priviledged (admin) role\nPriviledged roles bypasses permission check to use commands.\nSyntax: TRAIL <mention_role>", StaticPerms = discord.Permissions.all()) )
     def __PermissionCheck(self, ctx, trail, command, author):
         role_check = admin_role_check(ctx, trail, author)
         static_check = author.guild_permissions >= command.StaticPerms
@@ -94,6 +95,40 @@ class Parser:
             return await command.obj(ctx, args, trail)
         else:
             raise RuntimeError("Insufficent permissions")
+
+#####################################################################################################
+# Admin role
+
+Database.Default.Settings.AddDefault("admin_roles", dict()) # dict[' '.join(subtrail)] = admin_role_id
+def admin_role_check(ctx, trail, author):
+    local_env = Database.GetGuildEnv(ctx.guild.id)
+    admin_roles = local_env.Settings.Get("admin_roles")
+    for index in range (1, len(trail)):
+        key = ' '.join(trail[:index])
+        if key in admin_roles:
+            role_id = admin_roles[key]
+            if author.get_role(role_id):
+                return True
+    return False
+def get_admin_role(ctx, trail, author):
+    local_env = Database.GetGuildEnv(ctx.guild.id)
+    admin_roles = local_env.Settings.Get("admin_roles")
+    key = ' '.join(trail)
+    if key not in admin_roles: return None
+    role_id = admin_roles[key]
+    return ctx.guild.get_role(role_id)
+async def cmd_admin_role(ctx, args, trail):
+    local_env = Database.GetGuildEnv(ctx.guild.id)
+    admin_roles = local_env.Settings.Get("admin_roles")
+    key = ' '.join(trail)
+    if len(ctx.message.role_mentions) == 0: 
+        if key not in admin_roles: raise RuntimeError("Priviledged role not set")
+        del admin_roles[key]
+    else:
+        admin_roles[key] = ctx.message.role_mentions[0].id
+
+#####################################################################################################
+# MAIN PARSER
 
 objectMainParser = Parser(PREFIX)
 
@@ -186,34 +221,4 @@ async def cmd_bundle(ctx, args, trail):
     
 objectMainParser.Add( Command("bundle", cmd_bundle, Help = "Execute multiple commands in one go", LongHelp = "Execute multiple commands in one go.\nSyntax: TRAIL <command> ; <command> ; ... ; <command>\nTo separate commands, use ';' character.\nDo not use aliases in bundles please.") )
 
-#####################################################################################################
-# Admin role
-
-Database.Default.Settings.AddDefault("admin_roles", dict()) # dict[' '.join(subtrail)] = admin_role_id
-def admin_role_check(ctx, trail, author):
-    local_env = Database.GetGuildEnv(ctx.guild.id)
-    admin_roles = local_env.Settings.Get("admin_roles")
-    for index in range (1, len(trail)):
-        key = ' '.join(trail[:index])
-        if key in admin_roles:
-            role_id = admin_roles[key]
-            if author.get_role(role_id):
-                return True
-    return False
-def get_admin_role(ctx, trail, author):
-    local_env = Database.GetGuildEnv(ctx.guild.id)
-    admin_roles = local_env.Settings.Get("admin_roles")
-    key = ' '.join(trail)
-    if key not in admin_roles: return None
-    role_id = admin_roles[key]
-    return ctx.guild.get_role(role_id)
-async def cmd_admin_role(ctx, args, trail):
-    local_env = Database.GetGuildEnv(ctx.guild.id)
-    admin_roles = local_env.Settings.Get("admin_roles")
-    key = ' '.join(trail)
-    if len(ctx.message.role_mentions) == 0: 
-        if key not in admin_roles: raise RuntimeError("Priviledged role not set")
-        del admin_roles[key]
-    else:
-        admin_roles[key] = ctx.message.role_mentions[0].id
-objectMainParser.Add( Command("admrole", cmd_admin_role) )
+        
