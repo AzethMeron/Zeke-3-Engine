@@ -44,6 +44,28 @@ To start, run ```python executable_main.py``` while in the main directory. Proje
 
 ---
 
+# Why is it useful?
+
+Discord.py is awesome library but it lacks storage for permanent, guild-specific data. If you want to have separate settings for every guild <i>(server)</i> or guild member, you must implement it on your own. Simplest implementation would be ```dict()``` variable with ```key=guild.id``` used as storage, dumped on shutdown and loaded on startup using ```pickle```. Zeke does precisely that for you, and on top of that provides encryption, periodic backup and saving on remote server <i>(Dropbox)</i>.
+
+Furthemore, Zeke has custom command parser, granting you better control over it. While the code is complex, for the most part it uses only pure python and basic libraries, so you should be able to work out how features work and modify them to fulfill your needs. 
+
+---
+
+# Aliases & bundles
+
+Custom parser of Zeke has feature called ```alias```, which allows you to replace any set of commands with a keyword. Example:
+
+```zeke alias add $add_alias zeke alias add```
+
+now by using ```add_alias``` you can call ```zeke alias add```. Character ```$``` is used before keyword when you want to add or remove alias, but not when actually using this alias <i>(it's done for implementation reason: aliases are replaced before feeding command into parser, meaning removal would be impossible cuz name would be immediately replaced with full command)</i>. Alias can be used to change to <b>"change" bot's prefix</b>: ```zeke alias add $zk zeke``` allows you to use ```zk``` instead of ```zeke```.
+
+Note that you might accidently or purposely break the bot with aliases. For example, ```zeke alias add $zeke broken``` would replace ```zeke``` <i>(which is main command prefix)</i> with ```broken``` <i>(which is just text, not any command)</i> and parser would ignore this message, meaning <b>using any command would be impossible</b>. To mitigate this problem, I've implemented <b>no-alias mode</b>. By starting command with ```$```, like ```$zeke alias remove $zeke``` you can prevent aliases from replaxing keywords, allowing you to remove problematic aliases.
+
+Bundle is another feature of parser, allowing you to bundle multiple commands into one. Usage  ```zeke bundle command1 ; command2 ; command3```. ```;``` is used as separator for commands.
+
+---
+
 # Introduction, how-to-use
 
 To add a feature, you should create .py file in ```.features/``` directory. It will be automatically loaded on startup and you can "attach" your own code to the main process using ```Triggers```. It may sound complicated so let me show an example
