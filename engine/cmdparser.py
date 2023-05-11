@@ -72,7 +72,8 @@ class Parser:
                 mess.append('{0: <10}'.format(cmd) + Command.Help)
             return "\n".join(mess)
     async def HelpCmd(self, ctx, args, trail):
-        await Tools.DcReply(ctx.message, mess, lambda t: Tools.DcWrapCode(t), DeleteAfter = None)        mess = self.Help(ctx, args, trail)
+        mess = self.Help(ctx, args, trail)
+        await Tools.DcReply(ctx.message, mess, lambda t: Tools.DcWrapCode(t), DeleteAfter = None)
         return True
     def Add(self, command):
         name = command.Name
