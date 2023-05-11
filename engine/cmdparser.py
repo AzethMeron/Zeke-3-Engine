@@ -64,7 +64,7 @@ class Parser:
         else: # Not parametrized, parser help
             availableCommands = [ cmd for cmd in self.__commands if self.__BinaryPermssionCheck(ctx, trail, self.__commands[cmd], ctx.message.author) ]
             availableCommands.sort()
-            admin_role = get_admin_role(ctx, trail, author)
+            admin_role = get_admin_role(ctx, trail, ctx.message.author)
             mess = ["Syntax: " + ' '.join(trail) + " <command>"]
             if admin_role: mess.append(f"Priviledged role: {admin_role.mention}")
             for cmd in availableCommands:
