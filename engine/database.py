@@ -137,10 +137,7 @@ class Database:
             tmp = self.__storage.Load(key)
             if tmp:
                 tmp = AES.Decrypt( self.__aeskey(), tmp)
-                try: # ignore exception - only for migration
-                    tmp = zlib.decompress(tmp)
-                except:
-                    pass
+                tmp = zlib.decompress(tmp)
                 self.__guilds[key] = GuildEnv.Unpickle(tmp)
                 self.__guilds[key].Update(self.Default)
                 return True
