@@ -35,8 +35,13 @@ class Parser:
         static_check = author.guild_permissions >= command.StaticPerms
         dynamic_check = command.DynamicPerms(ctx)
         return (static_check and dynamic_check)
+    def __BinaryPermssionCheck(self, ctx, command, author):
+        try:
+            return self.__PermissionCheck(ctx, command, author)
+        except:
+            return False
     def __GetSimilarCommands(self, ctx, cmd, author):
-        commandNames = [ cmd for cmd in self.__commands if self.__PermissionCheck(ctx, self.__commands[cmd], author) ]
+        commandNames = [ cmd for cmd in self.__commands if self.__BinaryPermssionCheck(ctx, self.__commands[cmd], author) ]
         commandNames.sort(key = lambda x: -fuzz.ratio(x, cmd))
         return commandNames
     def Name(self):
@@ -56,7 +61,7 @@ class Parser:
                 mess = mess.replace("NAME", next_cmd)
                 return mess
         else: # Not parametrized, parser help
-            availableCommands = [ cmd for cmd in self.__commands if self.__PermissionCheck(ctx, self.__commands[cmd], ctx.message.author) ]
+            availableCommands = [ cmd for cmd in self.__commands if self.__BinaryPermssionCheck(ctx, self.__commands[cmd], ctx.message.author) ]
             availableCommands.sort()
             mess = ["Syntax: " + ' '.join(trail) + " <command>"] 
             for cmd in availableCommands:
