@@ -103,7 +103,7 @@ Database.Default.Settings.AddDefault("admin_roles", dict()) # dict[' '.join(subt
 def admin_role_check(ctx, trail, author):
     local_env = Database.GetGuildEnv(ctx.guild.id)
     admin_roles = local_env.Settings.Get("admin_roles")
-    for index in range (1, len(trail)):
+    for index in range (1, len(trail)+1):
         key = ' '.join(trail[:index])
         if key in admin_roles:
             role_id = admin_roles[key]
