@@ -211,6 +211,7 @@ from constants import BUNDLE_SPECIAL_CHAR
 
 async def cmd_bundle(ctx, args, trail):
     local_env = Database.GetGuildEnv(ctx.guild.id)
+    if len(ctx.message.mentions) > 0 or len(ctx.message.role_mentions) > 0: raise RuntimeError("Bundles don't work with commands requiring user or role mentions")
     original_content = ctx.message.content
     commands = (" ".join(args)).split(BUNDLE_SPECIAL_CHAR)
     for cmd in commands:
