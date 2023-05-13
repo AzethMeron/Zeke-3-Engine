@@ -7,6 +7,7 @@ Deals with most of back-end so you can focus on creation of functionality.
 
 - Local environment for each guild saved on remote server
 - AES encryption of data
+- Compression of data
 - Custom <i>(tree based)</i> parser for commands
 - Object-oriented
 - Aliases <i>(macros)</i> to shorten frequently used commands
@@ -293,6 +294,6 @@ Database stores data in dictionary in form ```dict[hash(guild_id)] = GuildEnv()`
 
 Data of guild is stored in file named ```hash(guild_id)```. ```hash``` <i>(in all cases)</i> means PBKDF2, which uses guild_id AND random salt <i>(automatically generated and stored in ```.salt.dump``` 24-byte long string of random bytes)</i>. This ensures that, even if connection or the remote storage itself is compromised, you can't even correlate those files to particular discord guilds.  
 
-The data itself is encrypted with ```AES``` algorithm using 24-bytes long key <i>(also automatically generated and stored in ```.aeskey.dump```)</i>. Encryption requires pickle-dumping of data, converting whole ```GuildEnv``` <i>(except ```Temporary``` part)</i> into binary string. SHA256 is used to compute hash of this binary string before encryption. Then, Initialisation Vector (IV, 16-bytes long) is randomly generated. Finally, binary string of data is encrypted into cipher. Tuple of all three ```(IV, cipher, hash)``` is then again pickle-dumped into binary string - which is returned.  
+The data itself is compressed and then encrypted with ```AES``` algorithm using 24-bytes long key <i>(also automatically generated and stored in ```.aeskey.dump```)</i>. Encryption requires pickle-dumping of data, converting whole ```GuildEnv``` <i>(except ```Temporary``` part)</i> into binary string. SHA256 is used to compute hash of this binary string before encryption. Then, Initialisation Vector (IV, 16-bytes long) is randomly generated. Finally, binary string of data is encrypted into cipher. Tuple of all three ```(IV, cipher, hash)``` is then again pickle-dumped into binary string - which is returned.  
 
-Decryption pretty much reverses this process, pickle-loading, decrypting and verifying hash. Note that pickle-dumping and pickle-loading is considered <b>INSECURE</b> in python and may run any code on server's machine if your storage is hacked. 
+Decryption pretty much reverses this process, pickle-loading, decrypting and verifying hash. Note that pickle-dumping and pickle-loading is considered <b>INSECURE</b> in python and may run any code on server's machine if your storage is hacked.
