@@ -260,6 +260,8 @@ async def cmd(ctx, args, trail):
 
 By default, ```Database``` uses ```Dropbox``` to store files, however it's designed to be compatible with abstract class ```Storage``` so if you implement all methods declared there, you can easily swap dropbox for something else - for example, local storage.
 
+<b>Very important limitation</b>: all variables in ```Database``` must be pickle-able and contain no self-referencing loops.
+
 ---
 
 # Status check
@@ -303,3 +305,9 @@ Decryption pretty much reverses this process, pickle-loading, decrypting and ver
 # Adding features
 
 Zeke was designed to allow expansion without ANY change to engine code. All python file <i>(```*.py```)</i> from ```.features``` directory are automatically imported after the engine's setup. By using ```Triggers```, ```Database```, ```Parser``` and others you can achieve pretty much anything and if Zeke doesn't have support for particular thing you need, you can access ```DiscordBot``` <i>(type ```discord.ext.commands.Bot```)</i> from ```discordbot.py``` and expand functionality as you want.
+
+Features are loaded in unordered manner. 
+
+Examples of features are stored in ```sample_features```. You must move them to ```.features``` if you want to test them out. Typically, you want ```.features``` to be another git repository <i>(private one)</i>. You can "comment out" <i>(disable)</i> feature by preceeding its' name with comma <i>(so ```levels.py``` is active, while ```.levels.py``` is disabled)</i>
+
+There is also important limitation - it's not always possible to remove feature from bot safely. <b>If there's any custom class object within ```Database```, then you CAN NOT remove feature of this class from bot</b>, otherwise ```Database``` will become unusable. By custom class, i mean any class declared within features. If you want to purge feature out of your repository, you must first write code to remove instances of such classes from database. However if you use only built-in python types this limitation doesn't apply.
