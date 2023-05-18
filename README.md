@@ -297,3 +297,9 @@ Data of guild is stored in file named ```hash(guild_id)```. ```hash``` <i>(in al
 The data itself is compressed and then encrypted with ```AES``` algorithm using 24-bytes long key <i>(also automatically generated and stored in ```.aeskey.dump```)</i>. Encryption requires pickle-dumping of data, converting whole ```GuildEnv``` <i>(except ```Temporary``` part)</i> into binary string. SHA256 is used to compute hash of this binary string before encryption. Then, Initialisation Vector (IV, 16-bytes long) is randomly generated. Finally, binary string of data is encrypted into cipher. Tuple of all three ```(IV, cipher, hash)``` is then again pickle-dumped into binary string - which is returned.  
 
 Decryption pretty much reverses this process, pickle-loading, decrypting and verifying hash. Note that pickle-dumping and pickle-loading is considered <b>INSECURE</b> in python and may run any code on server's machine if your storage is hacked.
+
+---
+
+# Adding features
+
+Zeke was designed to allow expansion without ANY change to engine code. All python file <i>(```*.py```)</i> from ```.features``` directory are automatically imported after the engine's setup. By using ```Triggers```, ```Database```, ```Parser``` and others you can achieve pretty much anything and if Zeke doesn't have support for particular thing you need, you can access ```DiscordBot``` <i>(type ```discord.ext.commands.Bot```)</i> from ```discordbot.py``` and expand functionality as you want.
