@@ -17,6 +17,7 @@ from cmdparser import objectMainParser as MainParser
 # Engine level "FEATURES" - non-essentials
 import status
 import features
+import temp
 
 # RUNNING THE ENGINE    
 def SigtermHandler(*args):
