@@ -24,7 +24,7 @@ Deals with most of back-end so you can focus on creation of functionality.
 # Installation, setup
 
 Created and tested for Python 3.11  
-All python packages required are listed in ```requirements.txt```, install them using pip ```install -r requirements.txt```  
+All python packages required are listed in ```requirements.txt```, install them using ```pip install -r requirements.txt```  
 
 Tokens must be included in ```.env``` file in working directory, containing:  
 ```env
