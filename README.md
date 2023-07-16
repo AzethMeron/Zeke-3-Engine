@@ -53,6 +53,12 @@ Furthemore, Zeke has custom command parser, granting you better control over it.
 
 ---
 
+# Warning
+
+This bot requires message content priviledged intent to create its' own command parser, which does work and it's much more convenient for me than Discord's commands, BUT as far as I've heard Discord DOESN'T verify bots <i>(and you need to verify your bot once it goes big, i THINK it's over 100 servers)</i> that use message content only for command parsing. So if you decide to use Zeke as your backend, you will either need to reimplement parser to use Discord's command or make a reasonable feature using message content intent.
+
+---
+
 # Aliases & bundles
 
 Custom parser of Zeke has feature called ```alias```, which allows you to replace any set of commands with a keyword. Example:
