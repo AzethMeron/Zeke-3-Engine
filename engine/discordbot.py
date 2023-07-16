@@ -7,7 +7,7 @@ from triggers import objectTimers as Timers
 from triggers import objectGlobalTimers as GlobalTimers
 from database import objectDatabase as Database
 from envvars import objectEnvVars as EnvVars
-from constants import PREFIX
+from constants import PREFIX, SECONDS_COUNTER_RESET
 import log as Log
 
 ####################################################################
@@ -28,14 +28,12 @@ def Connect(bot):
 
 ######################### TIMERS #########################
 
-TIME_RESET = 28*24*60*60 # reset "seconds"
 second = 1
 @tasks.loop(seconds=1)
 async def timer():
     global second
-    global TIME_RESET
     await TimerTick(second, DiscordBot)
-    second = (second + 1) % TIME_RESET
+    second = (second + 1) % SECONDS_COUNTER_RESET
     
 async def TimerTick(second, DiscordBot):
     for (t, trigger) in GlobalTimers.Iterate():
