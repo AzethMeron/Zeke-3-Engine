@@ -115,8 +115,8 @@ class Tools:
     def sha256(self, name):
         encoded = str(name).encode()
         return hashlib.sha256(encoded).hexdigest()
-    def ToSeconds(self, seconds=0, minutes=0, hours=0):
-        return seconds + minutes*60 + hours*60*60
+    def ToSeconds(self, seconds=0, minutes=0, hours=0, days=0, weeks=0):
+        return seconds + minutes*60 + hours*60*60 + days*24*60*60 + weeks*7*24*60*60
     def Flatten(self, lists):
         return [item for sublist in lists for item in sublist]
     def SegmentText(self,string, length=1980):

@@ -28,12 +28,14 @@ def Connect(bot):
 
 ######################### TIMERS #########################
 
+TIME_RESET = 28*24*60*60 # reset "seconds"
 second = 1
 @tasks.loop(seconds=1)
 async def timer():
     global second
+    global TIME_RESET
     await TimerTick(second, DiscordBot)
-    second = (second + 1) % 86400
+    second = (second + 1) % TIME_RESET
     
 async def TimerTick(second, DiscordBot):
     for (t, trigger) in GlobalTimers.Iterate():
