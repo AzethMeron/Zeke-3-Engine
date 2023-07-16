@@ -186,6 +186,20 @@ Triggers.Get("Status").Add(func) # async func(), returns (name:string, result:bo
 
 ---
 
+# Timers
+
+Timers are functions that get triggered every ```X``` seconds. They can called for each guild separately (```Timers```) or called only once (```GlobalTimers```).
+
+Syntax: 
+- ```Timers.Add(time, func) # async func(local_env, guild, second)```
+- ```GlobalTimers.Add(time, func) # async func(second)```
+  
+where ```second``` is current value of counter that increments each second. ```time``` is given in seconds, use ```Tools.ToSeconds(seconds=0, minutes=0, hours=0, days=0, weeks=0)``` for easy and readable conversion.
+
+There's a arbitrary limitation; internal counter is resetted every ```constant.SECONDS_COUNTER_RESET``` seconds, so you can't really schedule any task longer than that. If you do, <b>this task will be executed every time counter resets <i>(28 days by default)</i></b>.
+
+---
+
 # Command Parser
 
 Zeke comes with custom-made command parser to give programmer more control. <b>It uses two important classes: ```Command``` and ```Parser```</b>. ```Command``` represents singular function <i>(leaf in parser tree)</i>, while ```Parser``` controls control flow through the branches. I think it will make more sense when explained with examples:
