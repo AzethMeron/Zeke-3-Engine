@@ -308,6 +308,22 @@ Status is a ```Trigger``` that receives no arguments ```async func()```, but mus
 
 ---
 
+# Temporary files
+
+Feature for those who need to save something on local machine of bot, make some operations on it, then discard.
+
+```py
+from temp import objectTempManager as TempManager
+reference = TempManager.New()
+filepath = reference.Path()
+```
+
+Code snippet above generates random, unique filename within temporary directory and <b>claims it until the variable (reference) it is stored in gets destroyed</b>.
+Random filepath has no extension, you can add those on your own volition. <b>TempManager doesn't create ANY files</b>, it only manages filenames. However if you save file to this location and then reference is destroyed, <i>the file will be removed aswell</i>.
+TODO: As i was writing this, i literally encourage everyone to attach extension to filepath, but only files with original name <i>(without extension)</i> are removed once reference is destroyed. That's oversight and I will fix it... eventually.
+
+---
+
 # Security
 
 First of all, I've no education in computer security. I've tried to add encryption to all long-term storage data, but i don't have expertise to verify if the approach taken is actually secure. That being said, let me explain what's in the code.  
