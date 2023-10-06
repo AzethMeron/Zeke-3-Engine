@@ -319,7 +319,9 @@ filepath = reference.Path()
 ```
 
 Code snippet above generates random, unique filename within temporary directory and <b>claims it until the variable (reference) it is stored in gets destroyed</b>.
+
 Random filepath has no extension, you can add those on your own volition. <b>TempManager doesn't create ANY files</b>, it only manages filenames. However if you save file to this location and then reference is destroyed, <i>the file will be removed aswell</i>.
+
 TODO: As i was writing this, i literally encourage everyone to attach extension to filepath, but only files with original name <i>(without extension)</i> are removed once reference is destroyed. That's oversight and I will fix it... eventually.
 
 ---
