@@ -332,7 +332,7 @@ filepath2 = os.path.join(dirpath, "some_vid.mp4")
 
 Code snippet above generates random, unique filepath within temporary directory and <b>claims it until the variable (reference) it is stored in gets destroyed</b>.
 
-Random filepath has no extension. <b>TempManager doesn't create ANY files</b>, it only manages filenames. However if you save file to this location and then reference is destroyed, <i>the file will be removed aswell</i>. The same applies to directories.
+Random filepath has no extension. <b>TempManager doesn't create ANY files</b>, it only manages filenames. However if you save file to this location and then reference is destroyed, <b>the file will be removed aswell</b>. The same applies to directories.
 
 You can use random filepath to store any single file you want <i>(but you can't use extensions then)</i> or create a directory and save multiple files inside. Once the reference is destroyed, whole directory will be purged.
 
