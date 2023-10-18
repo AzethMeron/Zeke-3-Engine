@@ -3,7 +3,9 @@ import asyncio
 import os
 import sys
 import signal
+from dotenv import load_dotenv
 sys.path.extend( ["engine"] )
+load_dotenv()
 
 # LOADING ENGINE MODULES - SEQUENCE MATTERS! DO NOT CHANGE
 from triggers import objectTriggers as Triggers
@@ -18,6 +20,7 @@ from cmdparser import objectMainParser as MainParser
 import status
 import features
 import temp
+import cmdrun
 
 # RUNNING THE ENGINE    
 def SigtermHandler(*args):

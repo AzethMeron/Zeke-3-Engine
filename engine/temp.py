@@ -15,7 +15,7 @@ class TempObject:
         return self.__path
     def Remove(self):
         if os.path.exists(self.Path()):
-            os.remove(self.Path())
+            shutil.rmtree(self.Path(), ignore_errors=True)
 
 class TempManager:
     def __init__(self, dirname):

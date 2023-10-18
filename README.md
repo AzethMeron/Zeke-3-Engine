@@ -284,6 +284,14 @@ By default, ```Database``` uses ```Dropbox``` to store files, however it's desig
 
 ---
 
+# Environmental variables
+
+There's custom module for environmental variables but <b>do not use that</b>. The whole idea is poor and worked out below expectations.
+
+```.env``` is loaded at startup of the engine so you can use ```os.getenv(key)```. Don't bother figuring out ```envvars.py``` part of the engine, it's really not worth it.
+
+---
+
 # Status check
 
 Status check is feature of engine that simplifies debugging of 3rd party integrations. Translator and language detection in ```tools.py``` are a good example here.
@@ -313,16 +321,20 @@ Status is a ```Trigger``` that receives no arguments ```async func()```, but mus
 Feature for those who need to save something on local machine of bot, make some operations on it, then discard.
 
 ```py
+import os
 from temp import objectTempManager as TempManager
 reference = TempManager.New()
-filepath = reference.Path()
+dirpath = reference.Path()
+os.makedirs(dirpath)
+filepath1 = os.path.join(dirpath, "some_text.txt")
+filepath2 = os.path.join(dirpath, "some_vid.mp4")
 ```
 
-Code snippet above generates random, unique filename within temporary directory and <b>claims it until the variable (reference) it is stored in gets destroyed</b>.
+Code snippet above generates random, unique filepath within temporary directory and <b>claims it until the variable (reference) it is stored in gets destroyed</b>.
 
-Random filepath has no extension, you can add those on your own volition. <b>TempManager doesn't create ANY files</b>, it only manages filenames. However if you save file to this location and then reference is destroyed, <i>the file will be removed aswell</i>.
+Random filepath has no extension. <b>TempManager doesn't create ANY files</b>, it only manages filenames. However if you save file to this location and then reference is destroyed, <i>the file will be removed aswell</i>. The same applies to directories.
 
-TODO: As i was writing this, i literally encourage everyone to attach extension to filepath, but only files with original name <i>(without extension)</i> are removed once reference is destroyed. That's oversight and I will fix it... eventually.
+You can use random filepath to store any single file you want <i>(but you can't use extensions then)</i> or create a directory and save multiple files inside. Once the reference is destroyed, whole directory will be purged.
 
 ---
 
